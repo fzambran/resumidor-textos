@@ -1,0 +1,16 @@
+# Entorno
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+
+# Sistema
+.DS_Store
