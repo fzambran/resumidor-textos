@@ -7,8 +7,12 @@ function mockClipboard(writeText: (text: string) => Promise<void>) {
 }
 
 describe("useCopyToClipboard", () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it("copia el texto y vuelve a idle a los 3 segundos", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);

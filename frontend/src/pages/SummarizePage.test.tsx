@@ -12,7 +12,10 @@ const output = () => screen.getByRole("textbox", { name: "Resumen del texto" });
 const button = (name: string | RegExp) => screen.getByRole("button", { name });
 
 describe("SummarizePage", () => {
-  beforeEach(() => mockSummarize.mockReset());
+  // Con llaves: si el hook devolviera el mock, Vitest lo ejecutaría como limpieza.
+  beforeEach(() => {
+    mockSummarize.mockReset();
+  });
 
   it("deshabilita los controles con la entrada vacía", () => {
     render(<SummarizePage />);
