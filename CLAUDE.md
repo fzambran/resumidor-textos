@@ -47,3 +47,9 @@ Flujo de una petición: `TextInput` → hook `useSummarize` → `services/api.ts
 - Tiene activado el fallback del lado del servidor (`betas=["server-side-fallback-2026-07-01"]`, `fallbacks="default"`); si aun así `stop_reason == "refusal"`, se lanza `SummarizerError`.
 - No se puede prellenar el mensaje del asistente (prefill): da 400. Para controlar el formato, usar el system prompt.
 - Los tests nunca llaman a la API real: hacen `monkeypatch` de `summarizer.summarize`.
+
+## Tests del frontend
+
+- Vitest con jsdom y Testing Library (configurado en `vite.config.ts`, setup en `src/test/setup.ts`). Los tests van junto a cada archivo (`*.test.ts(x)`).
+- `SummarizePage.test.tsx` cubre las reglas del diseño de la UI y hace `vi.mock("../services/api")`, así que nunca llama al backend.
+- `userEvent.setup()` instala un portapapeles simulado; para probar "Pegar", leer con `navigator.clipboard.readText()`.
