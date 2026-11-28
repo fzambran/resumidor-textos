@@ -14,14 +14,16 @@ class SummarizerError(Exception):
     """Error de negocio al generar un resumen (se traduce a HTTP en la capa de rutas)."""
 
 
-# El cliente toma la credencial del entorno (ANTHROPIC_API_KEY o `ant auth login`).
+# La credencial viene del .env (vía settings); si no está, el SDK la busca en el
+# entorno (ANTHROPIC_API_KEY) o en el perfil de `ant auth login`.
 _client: anthropic.AsyncAnthropic | None = None
 
 
 def get_client() -> anthropic.AsyncAnthropic:
     global _client
     if _client is None:
-        _client = anthropic.AsyncAnthropic()
+        key = settings.anthropic_api_key
+        _client = anthropic.AsyncAnthropic(api_key=key.get_secret_value() if key else None)
     return _client
 
 
