@@ -35,7 +35,8 @@ Credenciales: copiar `.env.example` a `.env` en la raíz y definir `ANTHROPIC_AP
 Flujo de una petición: `TextInput` → hook `useSummarize` → `services/api.ts` → `POST /api/summarize` → `api/routes/summarize.py` → `services/summarizer.py` → API de Claude.
 
 - **Capas del backend:** las rutas (`app/api/routes/`) solo validan y traducen errores a HTTP; la lógica y la llamada a Claude viven en `app/services/summarizer.py`. Los errores de negocio se lanzan como `SummarizerError` (→ 422); los errores del SDK `anthropic` se mapean a 429/500/502 en la ruta.
-- **Contrato API compartido:** `backend/app/schemas/summarize.py` (Pydantic) y `frontend/src/types/summary.ts` deben mantenerse sincronizados a mano. Ojo: los valores de `length` están en español (`"corto" | "medio" | "largo"`).
+- **Contrato API compartido:** `backend/app/schemas/summarize.py` (Pydantic) y `frontend/src/types/summary.ts` deben mantenerse sincronizados a mano: `{ text, max_words }` con `max_words` entre 1 y 100 (por defecto 10), que es el rango de la barra de la UI.
+- **UI:** una sola página (`pages/SummarizePage.tsx`) que mantiene el estado; los componentes son presentacionales. Reglas del diseño: los controles se deshabilitan con la entrada vacía, y si la entrada está vacía el cuadro de salida vuelve a mostrar su placeholder. El botón "Pegar" copia el resumen al portapapeles. "Borrar" limpia la entrada y el resumen. Mientras carga o hay un error, un overlay cubre la salida y se bloquea la entrada. Los estilos están todos en `src/index.css`.
 - **Proxy en desarrollo:** `vite.config.ts` redirige `/api` a `localhost:8000`, así que el frontend usa rutas relativas. En producción se puede fijar `VITE_API_URL`. CORS del backend se configura con `CORS_ORIGINS`.
 - **La credencial de Claude solo vive en el backend**; el frontend nunca llama a Claude directamente.
 

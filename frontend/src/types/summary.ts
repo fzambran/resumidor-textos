@@ -1,9 +1,11 @@
 // Debe coincidir con backend/app/schemas/summarize.py
-export type SummaryLength = "corto" | "medio" | "largo";
+export const MIN_WORDS = 1;
+export const MAX_WORDS = 100;
+export const DEFAULT_WORDS = 10;
 
 export interface SummarizeRequest {
   text: string;
-  length: SummaryLength;
+  max_words: number;
 }
 
 export interface SummarizeResponse {

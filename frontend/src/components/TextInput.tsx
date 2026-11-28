@@ -1,43 +1,33 @@
-import { useState, type FormEvent } from "react";
-import type { SummaryLength } from "../types/summary";
+import { useEffect, useRef } from "react";
 
 interface Props {
-  loading: boolean;
-  onSubmit: (text: string, length: SummaryLength) => void;
+  value: string;
+  disabled: boolean;
+  onChange: (value: string) => void;
 }
 
-export default function TextInput({ loading, onSubmit }: Props) {
-  const [text, setText] = useState("");
-  const [length, setLength] = useState<SummaryLength>("medio");
+export default function TextInput({ value, disabled, onChange }: Props) {
+  const ref = useRef<HTMLTextAreaElement>(null);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (text.trim()) onSubmit(text, length);
+  useEffect(() => ref.current?.focus(), []);
+
+  // Tras pegar un texto largo, vuelve al inicio para que se lea desde el principio.
+  function handlePaste() {
+    setTimeout(() => {
+      if (ref.current) ref.current.scrollTop = 0;
+    }, 0);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="text-input">
-      <label htmlFor="texto">Texto a resumir</label>
-      <textarea
-        id="texto"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        rows={12}
-        placeholder="Pega aquí el texto…"
-      />
-      <div className="controls">
-        <label>
-          Extensión:{" "}
-          <select value={length} onChange={(e) => setLength(e.target.value as SummaryLength)}>
-            <option value="corto">Corto</option>
-            <option value="medio">Medio</option>
-            <option value="largo">Largo</option>
-          </select>
-        </label>
-        <button type="submit" disabled={loading || !text.trim()}>
-          {loading ? "Resumiendo…" : "Resumir"}
-        </button>
-      </div>
-    </form>
+    <textarea
+      ref={ref}
+      className="text-area"
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value)}
+      onPaste={handlePaste}
+      placeholder="Pegar el texto aquí"
+      aria-label="Texto a resumir"
+    />
   );
 }

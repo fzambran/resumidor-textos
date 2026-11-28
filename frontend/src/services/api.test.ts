@@ -9,7 +9,7 @@ describe("summarizeText", () => {
       "fetch",
       vi.fn().mockResolvedValue(new Response(JSON.stringify({ summary: "ok" }), { status: 200 })),
     );
-    await expect(summarizeText({ text: "hola", length: "corto" })).resolves.toEqual({ summary: "ok" });
+    await expect(summarizeText({ text: "hola", max_words: 10 })).resolves.toEqual({ summary: "ok" });
   });
 
   it("propaga el detalle de error del backend", async () => {
@@ -17,6 +17,6 @@ describe("summarizeText", () => {
       "fetch",
       vi.fn().mockResolvedValue(new Response(JSON.stringify({ detail: "fallo" }), { status: 422 })),
     );
-    await expect(summarizeText({ text: "hola", length: "corto" })).rejects.toThrow("fallo");
+    await expect(summarizeText({ text: "hola", max_words: 10 })).rejects.toThrow("fallo");
   });
 });

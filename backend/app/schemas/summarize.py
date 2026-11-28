@@ -1,13 +1,9 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field
-
-SummaryLength = Literal["corto", "medio", "largo"]
 
 
 class SummarizeRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=500_000)
-    length: SummaryLength = "medio"
+    max_words: int = Field(10, ge=1, le=100)
 
 
 class SummarizeResponse(BaseModel):

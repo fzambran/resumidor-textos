@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api", tags=["summarize"])
 @router.post("/summarize", response_model=SummarizeResponse)
 async def summarize(request: SummarizeRequest) -> SummarizeResponse:
     try:
-        summary = await summarizer.summarize(request.text, request.length)
+        summary = await summarizer.summarize(request.text, request.max_words)
     except summarizer.SummarizerError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     except anthropic.RateLimitError as e:

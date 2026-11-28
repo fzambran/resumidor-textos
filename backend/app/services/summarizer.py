@@ -1,7 +1,6 @@
 import anthropic
 
 from app.config import settings
-from app.schemas.summarize import SummaryLength
 from app.utils.text import clean_text
 
 SYSTEM_PROMPT = (
@@ -9,11 +8,6 @@ SYSTEM_PROMPT = (
     "idioma del texto original, sin introducciones ni comentarios adicionales."
 )
 
-LENGTH_INSTRUCTIONS: dict[SummaryLength, str] = {
-    "corto": "Resume el texto en 2 o 3 oraciones.",
-    "medio": "Resume el texto en un párrafo de 5 a 8 oraciones.",
-    "largo": "Resume el texto en varios párrafos, cubriendo todas las ideas principales.",
-}
 
 
 class SummarizerError(Exception):
@@ -31,8 +25,11 @@ def get_client() -> anthropic.AsyncAnthropic:
     return _client
 
 
-async def summarize(text: str, length: SummaryLength = "medio") -> str:
-    prompt = f"{LENGTH_INSTRUCTIONS[length]}\n\n<texto>\n{clean_text(text)}\n</texto>"
+async def summarize(text: str, max_words: int = 10) -> str:
+    prompt = (
+        f"Resume el texto en {max_words} palabras como máximo.\n\n"
+        f"<texto>\n{clean_text(text)}\n</texto>"
+    )
 
     # Streaming evita timeouts HTTP con textos largos; fallbacks="default" reintenta
     # en otro modelo si el principal rechaza la petición por política de seguridad.

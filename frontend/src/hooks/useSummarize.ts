@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { summarizeText } from "../services/api";
-import type { SummaryLength } from "../types/summary";
 
 export function useSummarize() {
-  const [summary, setSummary] = useState<string | null>(null);
+  const [summary, setSummary] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function summarize(text: string, length: SummaryLength) {
+  async function summarize(text: string, maxWords: number) {
     setLoading(true);
     setError(null);
-    setSummary(null);
     try {
-      const result = await summarizeText({ text, length });
+      const result = await summarizeText({ text, max_words: maxWords });
       setSummary(result.summary);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error inesperado.");
@@ -21,5 +19,10 @@ export function useSummarize() {
     }
   }
 
-  return { summary, error, loading, summarize };
+  function reset() {
+    setSummary("");
+    setError(null);
+  }
+
+  return { summary, error, loading, summarize, reset };
 }
